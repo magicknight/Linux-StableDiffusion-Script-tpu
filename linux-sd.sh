@@ -23,7 +23,8 @@ printf "\n"
 echo "Please refer to the original guide for more info and additional links for this project: https://rentry.org/guitard"
 printf "\n\n"
 
-DIRECTORY=./ultimate-stable-diffusion
+DIRECTORY=$(pwd)/../stable-diffusion-tpu
+SCRIPT_DIR = $(pwd)
 
 ultimate_stable_diffusion_repo () {
     # Check to see if Ultimate Stable Diffusion repo is cloned
@@ -39,8 +40,7 @@ ultimate_stable_diffusion_repo () {
         done
     else
         echo "Cloning Ultimate Stable Diffusion. Please wait..."
-        git clone https://github.com/hlky/stable-diffusion
-        mv stable-diffusion ultimate-stable-diffusion
+        git clone https://github.com/magicknight/stable-diffusion-tpu
         cp $DIRECTORY/scripts/relauncher.py $DIRECTORY/scripts/relauncher-backup.py
     fi
 }
@@ -53,7 +53,7 @@ ultimate_stable_diffusion_repo_update () {
     cp environment.yaml environment-backup.yaml
     sed -i 's/ldm/lsd/g' environment.yaml
     conda env update --file environment.yaml --prune
-    cd ..;
+    cd $SCRIPT_DIR;
 }
 
 sd_model_loading () {
@@ -145,7 +145,7 @@ linux_setup_script () {
     # If it does, it executes using bash in interactive mode due to issues with conda activation
     # If it does not exist, it generates the file and makes it executable
     if [ -f "$DIRECTORY/linux-setup.sh" ]; then
-        cd ultimate-stable-diffusion
+        cd stable-diffusion
         echo "Running linux-setup.sh..."
         bash -i ./linux-setup.sh
     else
@@ -153,7 +153,7 @@ linux_setup_script () {
         touch $DIRECTORY/linux-setup.sh
         chmod +x $DIRECTORY/linux-setup.sh
         printf "#!/bin/bash\n\n#MIT License\n\n#Copyright (c) 2022 Joshua Kimsey\n\n\n##### CONDA ENVIRONMENT ACTIVATION #####\n\n# Activate The Conda Environment\nconda activate lsd\n\n\n##### PYTHON HANDLING #####\n\npython scripts/relauncher.py" >> $DIRECTORY/linux-setup.sh
-        cd ultimate-stable-diffusion
+        cd stable-diffusion
         echo "Running linux-setup.sh..."
         bash -i ./linux-setup.sh
     fi
@@ -165,11 +165,11 @@ ultimate_stable_diffusion_arguments () {
 
     if [ "$1" = "customize" ]; then
         printf "\n\n"
-        echo "Do you want extra upscaling models to be run on the CPU instead of the GPU to save on VRAM at the cost of speed?"
+        echo "Do you want extra upscaling models to be run on the CPU instead of the TPU to save on VRAM at the cost of speed?"
         select yn in "Yes" "No"; do
             case $yn in
                 Yes ) echo "Setting extra upscaling models to use the CPU..."; sed -i 's/extra_models_cpu = False/extra_models_cpu = True/g' $DIRECTORY/scripts/relauncher.py; break;;
-                No ) echo "Extra upscaling models will run on the GPU. Continuing..."; sed -i 's/extra_models_cpu = True/extra_models_cpu = False/g' $DIRECTORY/scripts/relauncher.py; break;;
+                No ) echo "Extra upscaling models will run on the TPU. Continuing..."; sed -i 's/extra_models_cpu = True/extra_models_cpu = False/g' $DIRECTORY/scripts/relauncher.py; break;;
             esac
         done
         printf "\n\n"
