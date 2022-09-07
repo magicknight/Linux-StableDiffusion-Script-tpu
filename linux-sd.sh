@@ -228,7 +228,7 @@ ultimate_stable_diffusion () {
     if [ "$1" = "initial" ]; then
         ultimate_stable_diffusion_repo
         sd_model_loading
-        conda_env_setup
+        # conda_env_setup
         post_processor_model_loading
         ultimate_stable_diffusion_arguments
         linux_setup_script
