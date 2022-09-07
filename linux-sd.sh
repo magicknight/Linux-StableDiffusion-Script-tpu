@@ -23,8 +23,9 @@ printf "\n"
 echo "Please refer to the original guide for more info and additional links for this project: https://rentry.org/guitard"
 printf "\n\n"
 
-DIRECTORY=$(pwd)/../stable-diffusion-tpu
-SCRIPT_DIR = $(pwd)
+SCRIPT_DIR=$(pwd)
+DIRECTORY=$(pwd)/../run/stable-diffusion-tpu
+
 
 ultimate_stable_diffusion_repo () {
     # Check to see if Ultimate Stable Diffusion repo is cloned
@@ -40,8 +41,10 @@ ultimate_stable_diffusion_repo () {
         done
     else
         echo "Cloning Ultimate Stable Diffusion. Please wait..."
+        cd $(dirname $DIRECTORY)
         git clone https://github.com/magicknight/stable-diffusion-tpu
         cp $DIRECTORY/scripts/relauncher.py $DIRECTORY/scripts/relauncher-backup.py
+        cd $SCRIPT_DIR
     fi
 }
 
@@ -145,7 +148,7 @@ linux_setup_script () {
     # If it does, it executes using bash in interactive mode due to issues with conda activation
     # If it does not exist, it generates the file and makes it executable
     if [ -f "$DIRECTORY/linux-setup.sh" ]; then
-        cd stable-diffusion
+        cd $DIRECTORY
         echo "Running linux-setup.sh..."
         bash -i ./linux-setup.sh
     else
@@ -153,7 +156,7 @@ linux_setup_script () {
         touch $DIRECTORY/linux-setup.sh
         chmod +x $DIRECTORY/linux-setup.sh
         printf "#!/bin/bash\n\n#MIT License\n\n#Copyright (c) 2022 Joshua Kimsey\n\n\n##### CONDA ENVIRONMENT ACTIVATION #####\n\n# Activate The Conda Environment\nconda activate lsd\n\n\n##### PYTHON HANDLING #####\n\npython scripts/relauncher.py" >> $DIRECTORY/linux-setup.sh
-        cd stable-diffusion
+        cd $DIRECTORY
         echo "Running linux-setup.sh..."
         bash -i ./linux-setup.sh
     fi
